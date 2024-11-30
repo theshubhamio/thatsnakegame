@@ -188,7 +188,6 @@ function GameArea() {
                 {isGameOver && (
                     <div style={styles.gameOverOverlay} onClick={resetGame}>
                         <h2>🐍 Game Over 🐍</h2>
-                        <p>Your snake ate itself!</p>
                         <p>Tap to restart</p>
                     </div>)}
 
@@ -272,9 +271,9 @@ const styles = {
         display: "grid",
         aspectRatio: "1",
         width: "90vw",
-        maxWidth: "300px",
+        maxWidth: "500px",
         height: "90vw",
-        maxHeight: "300px",
+        maxHeight: "500px",
         gap: "2px",
     },
     cell: {
@@ -300,8 +299,8 @@ const styles = {
 
     },
     arrowButton: {
-        width: "40px",
-        height: "40px",
+        width: "50px",
+        height: "50px",
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
@@ -313,8 +312,8 @@ const styles = {
         color: "white"
     },
     playPauseButton: {
-        width: "40px",
-        height: "40px",
+        width: "50px",
+        height: "50px",
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
@@ -327,7 +326,7 @@ const styles = {
 
     },
     highScore: {
-        fontSize: "10px",
+        fontSize: "16px",
         margin: "10px", // Spacing between high score and grid
         fontWeight: "bold",
         color: "#333",

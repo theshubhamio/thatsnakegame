@@ -6,7 +6,7 @@ function App() {
     <div className="App">
       <h1>🐍 That Snake Game 🐍</h1>
       <GameArea/>
-      <h5>TheShubhamIO ©2024</h5>
+      <h4>TheShubhamIO ©2024</h4>
 
 
     </div>
