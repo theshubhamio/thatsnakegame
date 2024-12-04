@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+import { useGesture } from 'react-use-gesture';
+
 
 function GameArea() {
     const GRID_SIZE = 30; // Define the grid size (10x10)
@@ -147,13 +149,44 @@ function GameArea() {
         setFoodIndex(generateRandomIndex());
         setSnakeDirection("RIGHT");
         setGrid(initializeGrid());
+        setHighScore(0);
         setIsGameOver(false);
     };
 
+    const bind = useGesture({
+        onDrag: ({ direction, vxvy, distance, cancel }) => {
+          if (distance > 50) {
+            if (Math.abs(vxvy[0]) > Math.abs(vxvy[1])) {
+              // Horizontal swipe
+              if (vxvy[0] > 0) {
+                console.log('Swiped right');
+                handleClick("RIGHT");
+              } else {
+                console.log('Swiped left');
+                handleClick("LEFT");
+              }
+            } else {
+              // Vertical swipe
+              if (vxvy[1] > 0) {
+                console.log('Swiped down');
+                handleClick("DOWN");
+              } else {
+                console.log('Swiped up');
+                handleClick("UP");
+              }
+            }
+          }
+        },
+      });
+
+      const handleClick = (direction) => {
+        setSnakeDirection(direction);
+    };
+
     return (
-        <div style={styles.container}>
+        <div style={styles.container} {...bind()}>
             <div style={styles.highScore}>
-                High Score: <strong>{highScore}</strong>
+                Score: <strong>{highScore}</strong>
             </div>
             <div
                 style={{
@@ -162,110 +195,45 @@ function GameArea() {
                     gridTemplateRows: `repeat(${GRID_SIZE}, 1fr)`
                 }}
             >
-                {grid.map((cell) => (
+                {grid.map((cell,index) => (
                     <div
                         key={cell.index}
                         style={{
                             ...styles.cell,
                             backgroundColor: cell.isSnakeBody
-                                ? "green"
+                                ? "#34C759"
                                 : cell.isFood
-                                    ? "red"
-                                    : "lightgray"
+                                    ? "#E74C3C"
+                                    : ((((Math.floor(index / GRID_SIZE) + index % GRID_SIZE) % 2) === 0)
+                                    ? "#0B0C10" 
+                                    : "#1C1E22")
                         }}
                     />
                 ))}
             </div>
-            <div style={styles.controlsWrapper}>
 
-                {!isGameOver && <DirectionControl
-                    snakeDirection={snakeDirection}
-                    setSnakeDirection={setSnakeDirection}
-                    isPlaying={isPlaying}
-                    togglePlayPause={togglePlayPause}
-                />}
-
-                {isGameOver && (
+            {isGameOver && (
                     <div style={styles.gameOverOverlay} onClick={resetGame}>
                         <h2>🐍 Game Over 🐍</h2>
                         <p>Tap to restart</p>
                     </div>)}
-
-            
-
-            </div>
-        </div>
-    );
-}
-
-function DirectionControl({ snakeDirection, setSnakeDirection, isPlaying, togglePlayPause }) {
-    const handleClick = (direction) => {
-        setSnakeDirection(direction);
-    };
-
-    return (
-        <div style={styles.directionControl}>
-            <button
-                onClick={() => handleClick("LEFT")}
-                style={{
-                    ...styles.arrowButton,
-                    backgroundColor: snakeDirection === "LEFT" ? "blue" : "lightgray",
-                }}
-            >
-                ◀
-            </button>
-
-            <div style={styles.horizontalButtons}>
-                <button
-                    onClick={() => handleClick("UP")}
-                    style={{
-                        ...styles.arrowButton,
-                        backgroundColor: snakeDirection === "UP" ? "blue" : "lightgray",
-                    }}
-                >
-                    ▲
-                </button>
-
-                <button
-                    onClick={togglePlayPause}
-                    style={{
-                        ...styles.playPauseButton
-                    }}
-                >
-                    {isPlaying ? "❚❚" : "▶"}
-                </button>
-
-                <button
-                    onClick={() => handleClick("DOWN")}
-                    style={{
-                        ...styles.arrowButton,
-                        backgroundColor: snakeDirection === "DOWN" ? "blue" : "lightgray",
-                    }}
-                >
-                    ▼
-                </button>
-            </div>
-            <button
-                onClick={() => handleClick("RIGHT")}
-                style={{
-                    ...styles.arrowButton,
-                    backgroundColor: snakeDirection === "RIGHT" ? "blue" : "lightgray",
-                }}
-            >
-                ▶
-            </button>
+                    <h4 style={styles.footer}>That Snake Game by Shubham</h4>
 
         </div>
     );
 }
+
+
 
 const styles = {
     container: {
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
-        width: "100vw",
+        width: "100%",
         height: "100vh",
+        backgroundColor: "#0B0C10",
+        touchAction: 'none'
     },
     grid: {
         display: "grid",
@@ -325,11 +293,19 @@ const styles = {
         backgroundColor: "white"
 
     },
-    highScore: {
+    footer: {
         fontSize: "16px",
         margin: "10px", // Spacing between high score and grid
         fontWeight: "bold",
         color: "#333",
+        padding: "10px",
+        textAlign: "center",
+    },
+    highScore: {
+        fontSize: "30px",
+        margin: "16px", // Spacing between high score and grid
+        fontWeight: "bold",
+        color: "#D6D8DA",
         textAlign: "center",
     },
     gameOverOverlay: {
